@@ -185,3 +185,19 @@ void Shader::setMatrix4x4(const std::string& name, glm::mat4 value)
             << std::endl;
     }
 }
+
+void Shader::setVector3(const std::string& name, glm::vec3 value)
+{
+    int uniformLocation = glGetUniformLocation(ID, name.c_str());
+
+    if (uniformLocation != -1)
+    {
+        glUniform3fv(uniformLocation, 1, glm::value_ptr(value));
+    }
+    else
+    {
+        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+            << std::endl;
+    }
+    
+}

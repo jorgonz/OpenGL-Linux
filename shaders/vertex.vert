@@ -6,10 +6,10 @@ uniform mat4 mx4Model;
 uniform mat4 mx4View;
 uniform mat4 mx4Proj;
 
-out vec2 TexCoord;
+//out vec2 TexCoord;
 
 void main()
 {
     gl_Position = mx4Proj * mx4View * mx4Model * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
+    //TexCoord = aTexCoord;
 }

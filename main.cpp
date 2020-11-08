@@ -16,6 +16,7 @@
 
 using namespace std;
 
+/*
 GLfloat vertices[] = {
 
     //Position            //Texture 
@@ -60,6 +61,53 @@ GLfloat vertices[] = {
      0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+*/
+
+GLfloat vertices[] = {
+
+    //Position           
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f, 
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f, 
+    -0.5f,  0.5f, -0.5f, 
 };
 
 glm::vec3 cubePositions[] = {
@@ -278,6 +326,7 @@ int main()
     ////////////////////////////COMPILE SHADERS///////////////////////////////////
 
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
+    Shader shaderLightSource("shaders/vertex.vert", "shaders/lightSource.frag");
 
 
     ///////////////////CREATION OF VAOs VBOs and EBOs//////////////////////////////
@@ -299,7 +348,7 @@ int main()
     ///Bind the VBO to GL_ARRAY_BUFFER
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    LoadTexture("textures/container.jpg");
+    //LoadTexture("textures/container.jpg");
 
     ///Set the info of how the VBO must be read//
 
@@ -307,12 +356,28 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     //Tell OpenGL how to read the Position data from the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //Tell OpenGL how to read the Texture Coordinate data from the buffer
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1); 
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    //glEnableVertexAttribArray(1);
+
+    //Setup VAO for the light source object
+    unsigned int VBOLightSource;
+    glGenBuffers(1, &VBOLightSource);
+    unsigned int VAOLightSource;
+    glGenVertexArrays(1, &VAOLightSource);
+    glBindVertexArray(VAOLightSource);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //Populate the buffer with data (position, color, texture coordinate)
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    //Tell OpenGL how to read the Position data from the buffer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     ///Draw in Wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -325,6 +390,10 @@ int main()
 
     //Declare the ModelViewProjection Matrix for the vertex shader
     glm::mat4 modelviewproj = glm::mat4(1.0f);
+
+    shader.use();
+    shader.setVector3("vc3LightColor", glm::vec3(1.0f,1.0f,1.0f));
+    shader.setVector3("vc3ObjColor", glm::vec3(1.0f, 0.5f, 0.31f));
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -339,6 +408,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        //Draw Cube Container
         shader.use();
         glm::mat4 view = glm::mat4(1.0f);
         view = camera.GetViewMatrix();
@@ -349,9 +419,22 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3()); 
+        model = glm::translate(model, glm::vec3(0.0f)); 
         shader.setMatrix4x4("mx4Model", model);
 
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0 , 36);
+
+        //Draw Light Source
+        shaderLightSource.use();
+        shaderLightSource.setMatrix4x4("mx4View", view);
+        shaderLightSource.setMatrix4x4("mx4Proj", proj);
+        glm::mat4 lightSourceModel = glm::mat4(1.0f);
+        lightSourceModel = glm::translate(lightSourceModel, glm::vec3(1.2f, 1.0f, -2.0f));
+        lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
+        shaderLightSource.setMatrix4x4("mx4Model", lightSourceModel);
+
+        glBindVertexArray(VAOLightSource);
         glDrawArrays(GL_TRIANGLES, 0 , 36);
     
         ///Swap the Front and Back buffer.
