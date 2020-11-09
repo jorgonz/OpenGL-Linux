@@ -64,7 +64,7 @@ GLfloat vertices[] = {
 };
 */
 
-GLfloat vertices[] = {
+/*GLfloat vertices[] = {
 
     //Position           
     -0.5f, -0.5f, -0.5f,
@@ -108,6 +108,53 @@ GLfloat vertices[] = {
      0.5f,  0.5f,  0.5f,
     -0.5f,  0.5f,  0.5f, 
     -0.5f,  0.5f, -0.5f, 
+};
+*/
+
+float vertices[] = {
+
+    //Position            //Normal 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
 glm::vec3 cubePositions[] = {
@@ -352,16 +399,16 @@ int main()
 
     ///Set the info of how the VBO must be read//
 
-    //Populate the buffer with data (position, color, texture coordinate)
+    //Populate the buffer with data
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     //Tell OpenGL how to read the Position data from the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //Tell OpenGL how to read the Texture Coordinate data from the buffer
-    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    //glEnableVertexAttribArray(1);
+    //Tell OpenGL how to read the Normal vertex data
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     //Setup VAO for the light source object
     unsigned int VBOLightSource;
@@ -376,8 +423,12 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     //Tell OpenGL how to read the Position data from the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    //Tell OpenGL how to read the Normal vertex data
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     ///Draw in Wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -394,6 +445,7 @@ int main()
     shader.use();
     shader.setVector3("vc3LightColor", glm::vec3(1.0f,1.0f,1.0f));
     shader.setVector3("vc3ObjColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    shader.setVector3("vc3LightPosition" , glm::vec3(1.2f, 1.0f, -2.0f));
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -419,9 +471,9 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f)); 
+        model = glm::translate(model, glm::vec3(0.0f));
+        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f,1.0f,0.0f));
         shader.setMatrix4x4("mx4Model", model);
-
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0 , 36);
 

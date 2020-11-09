@@ -133,7 +133,7 @@ void Shader::setBool(const std::string& name, bool value)
     }
     else
     {
-        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+        std::cout << "Couldn't find uniform " << name << " in Shader program " << ID
             << std::endl;
     }
 
@@ -149,7 +149,7 @@ void Shader::setInt(const std::string& name, int value)
     }
     else
     {
-        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+        std::cout << "Couldn't find uniform " << name << " in Shader program " << ID
             << std::endl;
     }
 
@@ -165,7 +165,7 @@ void Shader::setFloat(const std::string& name, float value)
     }
     else
     {
-        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+        std::cout << "Couldn't find uniform " << name << " in Shader program " << ID
             << std::endl;
     }
 
@@ -181,7 +181,7 @@ void Shader::setMatrix4x4(const std::string& name, glm::mat4 value)
     }
     else
     {
-        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+        std::cout << "Couldn't find uniform " << name << " in Shader program " << ID
             << std::endl;
     }
 }
@@ -196,7 +196,7 @@ void Shader::setVector3(const std::string& name, glm::vec3 value)
     }
     else
     {
-        std::cout << "Couldn't find uniform " << name << "in Shader program " << ID
+        std::cout << "Couldn't find uniform " << name << " in Shader program " << ID
             << std::endl;
     }
     
