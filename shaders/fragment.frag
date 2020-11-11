@@ -10,11 +10,14 @@ uniform vec3 vc3LightPosition;
 //Object
 uniform vec3 vc3ObjColor;
 
+//Camera
+uniform vec3 vc3CameraPosition;
+
 void main()
 {
     //Ambient
     float fAmbientStrenght = 0.2f;
-    vec3 vc3AmbientLight = (vc3LightColor * fAmbientStrenght);
+    vec3 vc3AmbientLight = vc3LightColor * fAmbientStrenght;
 
     //Diffuse
     vec3 normalizedNormal = normalize(Normal);
@@ -22,5 +25,14 @@ void main()
     float fDiffuseStrength = max(dot(normalizedNormal, vc3LightDirection), 0.0f);
     vec3 vc3DiffuseLight = vc3LightColor * fDiffuseStrength;
 
-    FragColor = vec4(vc3ObjColor * (vc3AmbientLight + vc3DiffuseLight), 1.0f);
+    //Specular
+    float fSpecularStrength = 0.5;
+    vec3 vc3FragToCam = normalize(vc3CameraPosition - FragPosition);
+    vec3 reflectDir = reflect(-vc3LightDirection, normalizedNormal);
+    fSpecularStrength = pow(max(dot(reflectDir, vc3FragToCam), 0.0f) , 64) * fSpecularStrength;
+    vec3 vc3SpecularLight = vc3LightColor * fSpecularStrength;
+
+    vec3 vc3LightResult = vc3AmbientLight + vc3DiffuseLight + vc3SpecularLight;
+
+    FragColor = vec4(vc3ObjColor * vc3LightResult, 1.0f);
 }

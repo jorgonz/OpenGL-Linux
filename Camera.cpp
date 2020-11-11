@@ -90,6 +90,11 @@ void Camera::MoveCamera(Camera_Movement direction, float deltaTime)
     }
 }
 
+glm::vec3 Camera::GetCameraPosition()
+{
+    return this->Position;
+}
+
 ///This function returns the corresponding lookAt
 ///matrix for the shader pipeline
 glm::mat4 Camera::GetViewMatrix()

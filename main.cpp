@@ -178,6 +178,9 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
 //Declare a camera
 Camera camera(cameraPos, cameraFront, cameraUp);
 
+// LightSource Position
+glm::vec3 vc3LightSourcePos(1.0f, 0.0f, 1.0f);
+
 ///Time between current and last frame
 float deltaTime = 0.0f;
 ///TimeStamp of last Frame
@@ -445,7 +448,7 @@ int main()
     shader.use();
     shader.setVector3("vc3LightColor", glm::vec3(1.0f,1.0f,1.0f));
     shader.setVector3("vc3ObjColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader.setVector3("vc3LightPosition" , glm::vec3(1.2f, 1.0f, -2.0f));
+    shader.setVector3("vc3LightPosition" , vc3LightSourcePos);
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -474,6 +477,9 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f));
         model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f,1.0f,0.0f));
         shader.setMatrix4x4("mx4Model", model);
+
+        shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0 , 36);
 
@@ -482,7 +488,7 @@ int main()
         shaderLightSource.setMatrix4x4("mx4View", view);
         shaderLightSource.setMatrix4x4("mx4Proj", proj);
         glm::mat4 lightSourceModel = glm::mat4(1.0f);
-        lightSourceModel = glm::translate(lightSourceModel, glm::vec3(1.2f, 1.0f, -2.0f));
+        lightSourceModel = glm::translate(lightSourceModel, vc3LightSourcePos);
         lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
         shaderLightSource.setMatrix4x4("mx4Model", lightSourceModel);
 
