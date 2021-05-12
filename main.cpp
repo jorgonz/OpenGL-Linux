@@ -446,9 +446,18 @@ int main()
     glm::mat4 modelviewproj = glm::mat4(1.0f);
 
     shader.use();
-    shader.setVector3("vc3LightColor", glm::vec3(1.0f,1.0f,1.0f));
-    shader.setVector3("vc3ObjColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    shader.setVector3("vc3LightPosition" , vc3LightSourcePos);
+
+    //Set the light position, color and intensity    
+    shader.setVector3("lightSource.position", vc3LightSourcePos);
+    shader.setVector3("lightSource.ambientStrength", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader.setVector3("lightSource.diffuseStrength",glm::vec3(0.5f, 0.5f, 0.5f));
+    shader.setVector3("lightSource.specularStrength",glm::vec3(1.0f, 1.0f, 1.0f));
+
+    //Set the cube object material
+    shader.setVector3("objectMaterial.ambientColor",  glm::vec3(1.0f, 0.5f, 0.31f));
+    shader.setVector3("objectMaterial.diffuseColor",  glm::vec3(1.0f, 0.5f, 0.31f));
+    shader.setVector3("objectMaterial.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader.setFloat("objectMaterial.shininess", 32.0f);
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -475,7 +484,7 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f));
-        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f,1.0f,0.0f));
+        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMatrix4x4("mx4Model", model);
 
         shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
