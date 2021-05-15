@@ -322,7 +322,7 @@ void ProcessInput(GLFWwindow* window)
     }
 }
 
-bool LoadTexture(string stextureNameWithFullPath)
+bool LoadTexture(string stextureNameWithFullPath, unsigned int& texture)
 {
     //Load texture and store relevant info
     int width, height, nrChannels;
@@ -343,12 +343,9 @@ bool LoadTexture(string stextureNameWithFullPath)
             format = GL_RGBA;
 
     //Generate an OpenGL Texture Id
-    unsigned int texture;
+    //unsigned int texture;
     glGenTextures(1, &texture);
 
-    glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-
-    //Bind to current texture, so that proceeding config changes affect this texture
     glBindTexture(GL_TEXTURE_2D, texture);
 
     // set the texture wrapping/filtering options (on the currently bound texture object)
@@ -452,7 +449,11 @@ int main()
     ///Bind the VBO to GL_ARRAY_BUFFER
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    LoadTexture("textures/container2.png");
+    unsigned int DiffuseMapTextureId;
+    LoadTexture("textures/container2.png", DiffuseMapTextureId);
+
+    unsigned int SpecularMapTextureId;
+    LoadTexture("textures/container2_specular.png", SpecularMapTextureId);
 
     ///Set the info of how the VBO must be read//
 
@@ -513,7 +514,7 @@ int main()
 
     //Set the cube object material
     shader.setInt("objectMaterial.ambientDiffuseMap", 0);
-    shader.setVector3("objectMaterial.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader.setInt("objectMaterial.specularMap", 1);
     shader.setFloat("objectMaterial.shininess", 32.0f);
 
     ///This is the render loop *While the window is open*
@@ -540,13 +541,23 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f));
+        //Rotate around the light source
+        model = glm::translate(model, vc3LightSourcePos);
+        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::translate(model, -vc3LightSourcePos);
+        //Rotate around its own axis
         model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMatrix4x4("mx4Model", model);
 
         shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
 
+        //Bind VAO for the Wood/Metal container, bind both the
+        //Diffuse and Specular Map and Draw
         glBindVertexArray(VAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, DiffuseMapTextureId);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, SpecularMapTextureId);
         glDrawArrays(GL_TRIANGLES, 0 , 36);
 
         //Draw Light Source

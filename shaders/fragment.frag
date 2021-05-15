@@ -7,7 +7,7 @@ in vec2 TextureCoord;
 //Structs
 struct Material {
     sampler2D ambientDiffuseMap;
-    vec3 specularColor;
+    sampler2D specularMap;
     float shininess;
 };
 
@@ -42,7 +42,7 @@ void main()
     vec3 vc3FragToCam = normalize(vc3CameraPosition - FragPosition);
     vec3 reflectDir = reflect(-vc3LightDirection, normalizedNormal);
     float fSpecularStrength = pow(max(dot(reflectDir, vc3FragToCam), 0.0f) , objectMaterial.shininess);
-    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * objectMaterial.specularColor);
+    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap, TextureCoord)));
 
     vec3 vc3LightResult = vc3AmbientLight + vc3DiffuseLight + vc3SpecularLight;
 
