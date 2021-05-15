@@ -2,11 +2,11 @@
 out vec4 FragColor;
 in vec3 Normal;
 in vec3 FragPosition;
+in vec2 TextureCoord;
 
 //Structs
 struct Material {
-    vec3 ambientColor;
-    vec3 diffuseColor;
+    sampler2D ambientDiffuseMap;
     vec3 specularColor;
     float shininess;
 };
@@ -24,22 +24,19 @@ uniform Light lightSource;
 //Object's material 
 uniform Material objectMaterial;
 
-//uniform vec3 vc3LightColor;
-//uniform vec3 vc3LightPosition;
-
 //Camera
 uniform vec3 vc3CameraPosition;
 
 void main()
 {
     //Ambient
-    vec3 vc3AmbientLight = lightSource.ambientStrength * objectMaterial.ambientColor;
+    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord));
 
     //Diffuse
     vec3 normalizedNormal = normalize(Normal);
     vec3 vc3LightDirection = normalize(lightSource.position - FragPosition);
     float fDiffuseStrength = max(dot(normalizedNormal, vc3LightDirection), 0.0f);
-    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * objectMaterial.diffuseColor);
+    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord)));
 
     //Specular
     vec3 vc3FragToCam = normalize(vc3CameraPosition - FragPosition);
