@@ -221,16 +221,21 @@ glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
 
-//Declare a camera
+// Declare a camera
 Camera camera(cameraPos, cameraFront, cameraUp);
 
 // LightSource Position
 glm::vec3 vc3LightSourcePos(1.0f, 0.0f, 1.0f);
+glm::vec3 vc3LightSourceDir(-0.2f, -1.0f, -0.3f);
 
-///Time between current and last frame
+// Time between current and last frame
 float deltaTime = 0.0f;
-///TimeStamp of last Frame
+// TimeStamp of last Frame
 float lastFrame = 0.0f;
+
+// Flag for the current Scene
+unsigned int currentSceneIndex = 0;
+bool isEnterPressed = false;
 
 void calcDeltaTime()
 {
@@ -320,6 +325,32 @@ void ProcessInput(GLFWwindow* window)
 
         camera.MoveCamera(DOWN_SPIN,deltaTime);
     }
+
+///////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////
+    ///SCENE CONTROL////
+    ////////////////////
+
+    if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && !isEnterPressed)
+    {
+        isEnterPressed = true;
+
+        if(currentSceneIndex == 0)
+        {
+            currentSceneIndex = 1;
+        }
+        else if(currentSceneIndex == 1)
+        {
+            currentSceneIndex = 0;
+        }
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_RELEASE && isEnterPressed)
+    {
+        isEnterPressed = false;
+    }
+
 }
 
 bool LoadTexture(string stextureNameWithFullPath, unsigned int& texture)
@@ -422,7 +453,7 @@ int main()
     }
 
     ///Set the initial viewport -- GL functions can only be called after GLAD has been loaded
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
     ////////////////////////////COMPILE SHADERS///////////////////////////////////
 
@@ -505,12 +536,31 @@ int main()
     glm::mat4 modelviewproj = glm::mat4(1.0f);
 
     shader.use();
+    
+    //Set the Directional light position, color and intensity    
+    shader.setVector3("directionalLights[0].direction", vc3LightSourceDir);
+    shader.setVector3("directionalLights[0].ambientStrength", glm::vec3(0.1f, 0.1f, 0.1f));
+    shader.setVector3("directionalLights[0].diffuseStrength", glm::vec3(0.25f, 0.25f, 0.25f));
+    shader.setVector3("directionalLights[0].specularStrength", glm::vec3(0.5f, 0.5f, 0.5f));
 
-    //Set the light position, color and intensity    
-    shader.setVector3("lightSource.position", vc3LightSourcePos);
-    shader.setVector3("lightSource.ambientStrength", glm::vec3(0.2f, 0.2f, 0.2f));
-    shader.setVector3("lightSource.diffuseStrength",glm::vec3(0.5f, 0.5f, 0.5f));
-    shader.setVector3("lightSource.specularStrength",glm::vec3(1.0f, 1.0f, 1.0f));
+    //Set the Point light position color, intensity and decay 
+    shader.setVector3("pointLights[0].position", vc3LightSourcePos);
+    shader.setVector3("pointLights[0].ambientStrength", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader.setVector3("pointLights[0].diffuseStrength", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader.setVector3("pointLights[0].specularStrength",glm::vec3(1.0f, 1.0f, 1.0f));
+    shader.setFloat("pointLights[0].constantDecay", 1.0f);
+    shader.setFloat("pointLights[0].linearDecay", 0.09f);
+    shader.setFloat("pointLights[0].quadraticDecay", 0.032f);
+
+    //Set the Spot light position, color, intensity, decay and cutoffAngle
+    shader.setVector3("spotLights[0].ambientStrength", glm::vec3(0.1f, 0.1f, 0.1f));
+    shader.setVector3("spotLights[0].diffuseStrength", glm::vec3(0.8f, 0.8f, 0.8f));
+    shader.setVector3("spotLights[0].specularStrength",glm::vec3(1.0f, 1.0f, 1.0f));
+    shader.setFloat("spotLights[0].constantDecay", 1.0f);
+    shader.setFloat("spotLights[0].linearDecay", 0.09f);
+    shader.setFloat("spotLights[0].quadraticDecay", 0.032f);
+    shader.setFloat("spotLights[0].innerCutOffAngle", glm::cos(glm::radians(12.5f)));
+    shader.setFloat("spotLights[0].outerCutOffAngle", glm::cos(glm::radians(17.5f)));
 
     //Set the cube object material
     shader.setInt("objectMaterial.ambientDiffuseMap", 0);
@@ -520,15 +570,43 @@ int main()
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
     {
-        ///Get time in between frames for camera transformations
-        calcDeltaTime();
-
         ///Process user input
         ProcessInput(window);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        ///Get time in between frames for camera transformations
+        calcDeltaTime();
+        
+        shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
 
         ///Set background color
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        if(currentSceneIndex == 0)
+        {
+            //Blue background color
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+            //Activate Directional and Point Lights
+            shader.setInt("directionalLightsSize", 1);
+            shader.setInt("pointLightsSize", 1);
+
+            //Deactivate SpotLight
+            shader.setInt("spotLightsSize", 0);
+        }
+        else if(currentSceneIndex == 1)
+        {
+            //Black background color
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+            //Activate SpotLight
+            shader.setInt("spotLightsSize", 1);
+
+            //Deactivate Directional and Point Lights
+            shader.setInt("directionalLightsSize", 0);
+            shader.setInt("pointLightsSize", 0);
+
+            shader.setVector3("spotLights[0].position", camera.GetCameraPosition());
+            shader.setVector3("spotLights[0].direction", camera.GetCameraFront());
+        }
 
         //Draw Cube Container
         shader.use();
@@ -549,8 +627,6 @@ int main()
         model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMatrix4x4("mx4Model", model);
 
-        shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
-
         //Bind VAO for the Wood/Metal container, bind both the
         //Diffuse and Specular Map and Draw
         glBindVertexArray(VAO);
@@ -560,18 +636,38 @@ int main()
         glBindTexture(GL_TEXTURE_2D, SpecularMapTextureId);
         glDrawArrays(GL_TRIANGLES, 0 , 36);
 
-        //Draw Light Source
-        shaderLightSource.use();
-        shaderLightSource.setMatrix4x4("mx4View", view);
-        shaderLightSource.setMatrix4x4("mx4Proj", proj);
-        glm::mat4 lightSourceModel = glm::mat4(1.0f);
-        lightSourceModel = glm::translate(lightSourceModel, vc3LightSourcePos);
-        lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
-        shaderLightSource.setMatrix4x4("mx4Model", lightSourceModel);
+        for(int i = 1; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setMatrix4x4("mx4Model", model);
+            //Bind VAO for the Wood/Metal container, bind both the
+            //Diffuse and Specular Map and Draw
+            glBindVertexArray(VAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, DiffuseMapTextureId);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, SpecularMapTextureId);
+            glDrawArrays(GL_TRIANGLES, 0 , 36);
+        }
 
-        glBindVertexArray(VAOLightSource);
-        glDrawArrays(GL_TRIANGLES, 0 , 36);
-    
+        //Draw Light Source
+        if(currentSceneIndex == 0)
+        {
+            shaderLightSource.use();
+            shaderLightSource.setMatrix4x4("mx4View", view);
+            shaderLightSource.setMatrix4x4("mx4Proj", proj);
+            glm::mat4 lightSourceModel = glm::mat4(1.0f);
+            lightSourceModel = glm::translate(lightSourceModel, vc3LightSourcePos);
+            lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
+            shaderLightSource.setMatrix4x4("mx4Model", lightSourceModel);
+
+            glBindVertexArray(VAOLightSource);
+            glDrawArrays(GL_TRIANGLES, 0 , 36);
+        }
+        
         ///Swap the Front and Back buffer.
         glfwSwapBuffers(window);
 

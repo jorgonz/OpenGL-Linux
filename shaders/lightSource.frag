@@ -10,6 +10,5 @@ uniform vec3 vc3ObjColor;
 
 void main()
 {
-    //FragColor = texture(ourTexture, TexCoord);
     FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }

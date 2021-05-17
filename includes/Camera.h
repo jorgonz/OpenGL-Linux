@@ -76,6 +76,7 @@ class Camera
 
         ///Public Functions
         glm::vec3 GetCameraPosition();
+        glm::vec3 GetCameraFront();
         glm::mat4 GetViewMatrix();
         glm::mat4 GetProjectionMatrix();
 

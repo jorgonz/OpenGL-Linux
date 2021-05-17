@@ -95,6 +95,11 @@ glm::vec3 Camera::GetCameraPosition()
     return this->Position;
 }
 
+glm::vec3 Camera::GetCameraFront()
+{
+    return this->Front;
+}
+
 ///This function returns the corresponding lookAt
 ///matrix for the shader pipeline
 glm::mat4 Camera::GetViewMatrix()
