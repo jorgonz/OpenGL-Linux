@@ -7,8 +7,8 @@ in vec2 TextureCoord;
 // Structs
 struct Material 
 {
-    sampler2D ambientDiffuseMap;
-    sampler2D specularMap;
+    sampler2D diffuseMap0;
+    sampler2D specularMap0;
     float shininess;
 };
 
@@ -78,17 +78,17 @@ vec3 CalcDirLight(DirectionalLight lightSource, vec3 fragNormal, vec3 fragToCam)
     vec3 vc3LightDirection = normalize(-lightSource.direction);
 
     // Ambient
-    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord));
+    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord));
 
     // Diffuse
     vec3 normalizedNormal = normalize(fragNormal);
     float fDiffuseStrength = max(dot(normalizedNormal, vc3LightDirection), 0.0f);
-    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord)));
+    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord)));
 
     // Specular
     vec3 reflectDir = reflect(-vc3LightDirection, normalizedNormal);
     float fSpecularStrength = pow(max(dot(reflectDir, fragToCam), 0.0f) , objectMaterial.shininess);
-    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap, TextureCoord)));
+    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap0, TextureCoord)));
     
     return vc3AmbientLight + vc3DiffuseLight + vc3SpecularLight;
 }
@@ -104,19 +104,19 @@ vec3 CalcPointLight(PointLight lightSource, vec3 fragNormal, vec3 fragToCam)
     lightSource.quadraticDecay * (distanceToLight * distanceToLight));
 
     // Ambient
-    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord));
+    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord));
     vc3AmbientLight *= attenuation;
 
     // Diffuse
     vec3 normalizedNormal = normalize(fragNormal);
     float fDiffuseStrength = max(dot(normalizedNormal, vc3LightDirection), 0.0f);
-    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord)));
+    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord)));
     vc3DiffuseLight *= attenuation;
 
     // Specular
     vec3 reflectDir = reflect(-vc3LightDirection, normalizedNormal);
     float fSpecularStrength = pow(max(dot(reflectDir, fragToCam), 0.0f) , objectMaterial.shininess);
-    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap, TextureCoord)));
+    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap0, TextureCoord)));
     vc3SpecularLight *= attenuation;
     
     return vc3AmbientLight + vc3DiffuseLight + vc3SpecularLight;
@@ -137,20 +137,20 @@ vec3 CalcSpotLight(SpotLight lightSource, vec3 fragNormal, vec3 fragToCam)
     float intensity = clamp((theta - lightSource.outerCutOffAngle) / epsilon, 0.0, 1.0);
 
     // Ambient
-    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord));
+    vec3 vc3AmbientLight = lightSource.ambientStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord));
     vc3AmbientLight *= attenuation;
 
     // Diffuse
     vec3 normalizedNormal = normalize(fragNormal);
     float fDiffuseStrength = max(dot(normalizedNormal, vc3LightDirection), 0.0f);
-    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.ambientDiffuseMap, TextureCoord)));
+    vec3 vc3DiffuseLight = lightSource.diffuseStrength * (fDiffuseStrength * vec3(texture(objectMaterial.diffuseMap0, TextureCoord)));
     vc3DiffuseLight *= intensity;
     vc3DiffuseLight *= attenuation;
 
     // Specular
     vec3 reflectDir = reflect(-vc3LightDirection, normalizedNormal);
     float fSpecularStrength = pow(max(dot(reflectDir, fragToCam), 0.0f) , objectMaterial.shininess);
-    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap, TextureCoord)));
+    vec3 vc3SpecularLight = lightSource.specularStrength * (fSpecularStrength * vec3(texture(objectMaterial.specularMap0, TextureCoord)));
     vc3SpecularLight *= intensity;
     vc3SpecularLight *= attenuation;
 

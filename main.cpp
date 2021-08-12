@@ -9,108 +9,13 @@
 //OpenGL function loader
 #include "includes/glad.h"
 //Custom Classes
-#include "includes/Shader.h"
+//#include "includes/Shader.h"
 #include "includes/Camera.h"
+#include "includes/Model.h"
 //GLFW
 #include <GLFW/glfw3.h>
 
 using namespace std;
-
-/*
-GLfloat vertices[] = {
-
-    //Position            //Texture 
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
-*/
-
-/*
-GLfloat vertices[] = {
-
-    //Position           
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f, 
-    -0.5f, -0.5f,  0.5f,
-
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
-
-    -0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f, 
-    -0.5f,  0.5f, -0.5f, 
-};
-*/
 
 float verticesLightSource[] = {
 
@@ -201,19 +106,6 @@ float vertices[] = {
      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
-
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f),
-    glm::vec3( 2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3( 2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3( 1.3f, -2.0f, -2.5f),
-    glm::vec3( 1.5f,  2.0f, -2.5f),
-    glm::vec3( 1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
 // camera
@@ -452,6 +344,9 @@ int main()
         return -1;
     }
 
+    //Load Model
+    Model backpackmodel("models/backpack/backpack.obj");
+
     ///Set the initial viewport -- GL functions can only be called after GLAD has been loaded
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
@@ -459,7 +354,6 @@ int main()
 
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     Shader shaderLightSource("shaders/vertex.vert", "shaders/lightSource.frag");
-
 
     ///////////////////CREATION OF VAOs VBOs and EBOs//////////////////////////////
 
@@ -563,8 +457,8 @@ int main()
     shader.setFloat("spotLights[0].outerCutOffAngle", glm::cos(glm::radians(17.5f)));
 
     //Set the cube object material
-    shader.setInt("objectMaterial.ambientDiffuseMap", 0);
-    shader.setInt("objectMaterial.specularMap", 1);
+    shader.setInt("objectMaterial.diffuseMap0", 0);
+    shader.setInt("objectMaterial.specularMap0", 1);
     shader.setFloat("objectMaterial.shininess", 32.0f);
 
     ///This is the render loop *While the window is open*
@@ -608,7 +502,6 @@ int main()
             shader.setVector3("spotLights[0].direction", camera.GetCameraFront());
         }
 
-        //Draw Cube Container
         shader.use();
         glm::mat4 view = glm::mat4(1.0f);
         view = camera.GetViewMatrix();
@@ -619,39 +512,9 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
-        //Rotate around the light source
-        model = glm::translate(model, vc3LightSourcePos);
-        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::translate(model, -vc3LightSourcePos);
-        //Rotate around its own axis
-        model = glm::rotate(model, (float) glm::radians(glfwGetTime() * 60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMatrix4x4("mx4Model", model);
 
-        //Bind VAO for the Wood/Metal container, bind both the
-        //Diffuse and Specular Map and Draw
-        glBindVertexArray(VAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, DiffuseMapTextureId);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, SpecularMapTextureId);
-        glDrawArrays(GL_TRIANGLES, 0 , 36);
-
-        for(int i = 1; i < 10; i++)
-        {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setMatrix4x4("mx4Model", model);
-            //Bind VAO for the Wood/Metal container, bind both the
-            //Diffuse and Specular Map and Draw
-            glBindVertexArray(VAO);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, DiffuseMapTextureId);
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, SpecularMapTextureId);
-            glDrawArrays(GL_TRIANGLES, 0 , 36);
-        }
+        backpackmodel.Draw(shader);
 
         //Draw Light Source
         if(currentSceneIndex == 0)
