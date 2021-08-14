@@ -1,10 +1,11 @@
 #include "includes/Mesh.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, float shininess)
 {
-    this->vertices = vertices;
-    this->indices  = indices;
-    this->textures = textures;
+    this->vertices  = std::move(vertices);
+    this->indices   = std::move(indices);
+    this->textures  = std::move(textures);
+    this->shininess = shininess;
 
     setupMesh();
 }
@@ -50,7 +51,7 @@ void Mesh::Draw(Shader &shader)
     for(unsigned int i = 0; i < this->textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
-        // retrieve texture number (the N in diffuse_textureN)
+        // retrieve texture number (the N in diffuseMapN)
         std::string number;
         std::string name = this->textures[i].type;
         if(name == "diffuseMap")
@@ -62,6 +63,8 @@ void Mesh::Draw(Shader &shader)
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
+    
+    shader.setFloat("objectMaterial.shininess", this->shininess);
 
     // draw mesh
     glBindVertexArray(VAO);

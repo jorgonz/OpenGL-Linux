@@ -63,51 +63,6 @@ float verticesLightSource[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
-float vertices[] = {
-    // positions          // normals           // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
-
 // camera
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -245,48 +200,6 @@ void ProcessInput(GLFWwindow* window)
 
 }
 
-bool LoadTexture(string stextureNameWithFullPath, unsigned int& texture)
-{
-    //Load texture and store relevant info
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(stextureNameWithFullPath.c_str(), &width, &height, &nrChannels, 0);
-
-    if(data == NULL)
-    {
-        cout << "LoadTexture: texture of name '" << stextureNameWithFullPath << "' didn't load" << endl;
-        return false;
-    }
-
-    GLenum format;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
-
-    //Generate an OpenGL Texture Id
-    //unsigned int texture;
-    glGenTextures(1, &texture);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    //Populate Texture Id with data
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    //Free memory after you are done
-    stbi_image_free(data);
-
-    return true;
-}
-
 //Screen Resolution
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -344,9 +257,6 @@ int main()
         return -1;
     }
 
-    //Load Model
-    Model backpackmodel("models/backpack/backpack.obj");
-
     ///Set the initial viewport -- GL functions can only be called after GLAD has been loaded
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
@@ -360,42 +270,6 @@ int main()
     //VAO-Vertex Array Object
     //VBO-Vertex Buffer Object
     //EBO-Element Buffer Object
-
-    ///Generate VBO
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    ///Generate VAO
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-
-    ///First Bind the VAO, so that all the configuration is saved in this VAO
-    glBindVertexArray(VAO);
-
-    ///Bind the VBO to GL_ARRAY_BUFFER
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    unsigned int DiffuseMapTextureId;
-    LoadTexture("textures/container2.png", DiffuseMapTextureId);
-
-    unsigned int SpecularMapTextureId;
-    LoadTexture("textures/container2_specular.png", SpecularMapTextureId);
-
-    ///Set the info of how the VBO must be read//
-
-    //Populate the buffer with data
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    //Tell OpenGL how to read the Position data from the buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //Tell OpenGL how to read the Normal vertex data
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    //Tell OpenGL how to read the texture vertex data
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     //Setup VAO for the light source object
     unsigned int VBOLightSource;
@@ -429,9 +303,8 @@ int main()
     //Declare the ModelViewProjection Matrix for the vertex shader
     glm::mat4 modelviewproj = glm::mat4(1.0f);
 
+    //Set the Directional light position, color and intensity
     shader.use();
-    
-    //Set the Directional light position, color and intensity    
     shader.setVector3("directionalLights[0].direction", vc3LightSourceDir);
     shader.setVector3("directionalLights[0].ambientStrength", glm::vec3(0.1f, 0.1f, 0.1f));
     shader.setVector3("directionalLights[0].diffuseStrength", glm::vec3(0.25f, 0.25f, 0.25f));
@@ -461,6 +334,9 @@ int main()
     shader.setInt("objectMaterial.specularMap0", 1);
     shader.setFloat("objectMaterial.shininess", 32.0f);
 
+    //Load Models
+    Model backpackmodel("models/backpack/backpack.obj");
+
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
     {
@@ -471,6 +347,7 @@ int main()
         ///Get time in between frames for camera transformations
         calcDeltaTime();
         
+        shader.use();
         shader.setVector3("vc3CameraPosition", camera.GetCameraPosition());
 
         ///Set background color

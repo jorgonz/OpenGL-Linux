@@ -174,6 +174,7 @@ void main()
         vc3LightResult += CalcPointLight(pointLights[i], Normal, vc3FragToCam);
     }
 
+    // Spot Lights
     for(int i = 0; i < spotLightsSize; i++)
     {
         vc3LightResult += CalcSpotLight(spotLights[i], Normal, vc3FragToCam);

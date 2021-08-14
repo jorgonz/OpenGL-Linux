@@ -1,7 +1,7 @@
 #include "includes/Model.h"
 #include "includes/stb_image.h"
 
-Model::Model(std::string path)
+Model::Model(const std::string& path)
 {
     this->loadModel(path);
 }
@@ -14,10 +14,11 @@ void Model::Draw(Shader &shader)
     }    
 }
 
-void Model::loadModel(std::string path)
+void Model::loadModel(const std::string& path)
 {
+    std::cout << "Loading Model: " << path << std::endl;
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate /*| aiProcess_FlipUVs*/);
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
     {
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
@@ -26,9 +27,10 @@ void Model::loadModel(std::string path)
     this->directory = path.substr(0, path.find_last_of('/'));
 
     processNode(scene->mRootNode, scene);
+    std::cout << "Successfully Loaded Model: " << path << std::endl;
 }
 
-void Model::processNode(aiNode *node, const aiScene *scene)
+void Model::processNode(aiNode *node, const aiScene* scene)
 {
     // process all the node's meshes (if any)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -103,8 +105,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     }
 
     /* FILL MATERIAL DATA */
+    float shininess;
     if(mesh->mMaterialIndex >= 0)
     {
+        //Load Diffuse and Specular maps
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material, 
                                             aiTextureType_DIFFUSE, "diffuseMap");
@@ -112,9 +116,37 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         std::vector<Texture> specularMaps = loadMaterialTextures(material, 
                                             aiTextureType_SPECULAR, "specularMap");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+        // Get the shininess for this specific material
+        if(AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess))
+        {
+            // if unsuccessful set a default
+            shininess = 32.0f;
+        }        
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, shininess);
+}
+
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+{
+    std::vector<Texture> textures;
+    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    {
+        aiString str;
+        mat->GetTexture(type, i, &str);
+
+        if(!isTextureCached(str))
+        {
+            Texture texture;
+            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.type = typeName;
+            texture.path = str.C_Str();
+            textures.push_back(texture);
+            cachedTextures.push_back(texture);
+        }        
+    }
+    return textures;
 }
 
 unsigned int Model::TextureFromFile(const char *path, const std::string &directory)
@@ -126,7 +158,7 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-    stbi_set_flip_vertically_on_load(true);  
+    //stbi_set_flip_vertically_on_load(true);  
     unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
@@ -158,29 +190,9 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
     return textureID;
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
-{
-    std::vector<Texture> textures;
-    for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-    {
-        aiString str;
-        mat->GetTexture(type, i, &str);
-
-        if(!isTextureCached(str))
-        {
-            Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), directory);
-            texture.type = typeName;
-            texture.path = str.C_Str();
-            textures.push_back(texture);
-            cachedTextures.push_back(texture);
-        }        
-    }
-    return textures;
-}
-
 bool Model::isTextureCached(aiString texture)
 {
+    //For small n (n < 10) linear search with vector is fast
     for(unsigned int i = 0; i < cachedTextures.size(); i++)
     {
         if(std::strcmp(cachedTextures[i].path.data(), texture.C_Str()) == 0)
