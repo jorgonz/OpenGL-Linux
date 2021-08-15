@@ -336,8 +336,7 @@ int main()
 
     //Load Models
     Model backpackmodel("models/backpack/backpack.obj");
-    //Model backpackmodel("models/basemodel/BaseModel.obj");
-    //Model backpackmodel("models/baymax/Bigmax_White_OBJ.obj");
+    Model planetmodel("models/planet/planet.obj");
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -391,10 +390,13 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
         shader.setMatrix4x4("mx4Model", model);
-
         backpackmodel.Draw(shader);
+
+        model = glm::scale(model, glm::vec3(0.7f, 0.7f, 0.7f));
+        model = glm::translate(model, glm::vec3(8.0f, 0.0f, 0.0f));
+        shader.setMatrix4x4("mx4Model", model);
+        planetmodel.Draw(shader);
 
         //Draw Light Source
         if(currentSceneIndex == 0)

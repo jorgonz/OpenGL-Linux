@@ -134,7 +134,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         }
         else
         {
-            mat.ambientColor = glm::vec3(0.5f, 0.5f, 0.5f);
+            mat.ambientColor = glm::vec3(1.0f, 0.5f, 0.31f);
         }
 
         if(aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
@@ -143,7 +143,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         }
         else
         {
-            mat.diffuseColor = glm::vec3(0.5f, 0.5f, 0.5f);
+            mat.diffuseColor = glm::vec3(1.0f, 0.5f, 0.31f);
         }
 
         if(aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_SPECULAR, color))
