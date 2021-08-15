@@ -336,6 +336,8 @@ int main()
 
     //Load Models
     Model backpackmodel("models/backpack/backpack.obj");
+    //Model backpackmodel("models/basemodel/BaseModel.obj");
+    //Model backpackmodel("models/baymax/Bigmax_White_OBJ.obj");
 
     ///This is the render loop *While the window is open*
     while (!glfwWindowShouldClose(window))
@@ -389,6 +391,7 @@ int main()
         shader.setMatrix4x4("mx4Proj", proj);
 
         glm::mat4 model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
         shader.setMatrix4x4("mx4Model", model);
 
         backpackmodel.Draw(shader);

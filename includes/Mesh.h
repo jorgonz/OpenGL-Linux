@@ -21,9 +21,16 @@ struct Texture {
     std::string path;
 };
 
+struct Material {
+    glm::vec3 ambientColor;
+    glm::vec3 diffuseColor;
+    glm::vec3 specularColor;
+};
+
 class Mesh {
     public:
-        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, float shininess);
+        Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, 
+             const std::vector<Texture>& textures, Material material, float shininess, bool meshUsesTextures);
         void Draw(Shader &shader);
     private:
 
@@ -35,11 +42,17 @@ class Mesh {
 
         // mesh data
         std::vector<Vertex>       vertices;
-        std::vector<unsigned int> indices;
         std::vector<Texture>      textures;
+        std::vector<unsigned int> indices;
+
+        // Color
+        Material material;
 
         // Shininess 
         float shininess;
+
+        // Texture Flag
+        bool meshUsesTextures;
         
         void setupMesh();
 };  

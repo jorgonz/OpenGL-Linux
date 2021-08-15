@@ -1,12 +1,14 @@
 #include "includes/Mesh.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, float shininess)
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures, 
+           Material material, float shininess, bool meshUsesTextures)
 {
     this->vertices  = std::move(vertices);
     this->indices   = std::move(indices);
     this->textures  = std::move(textures);
+    this->material  = material;
     this->shininess = shininess;
-
+    this->meshUsesTextures = meshUsesTextures;
     setupMesh();
 }
 
@@ -64,7 +66,11 @@ void Mesh::Draw(Shader &shader)
     }
     glActiveTexture(GL_TEXTURE0);
     
-    shader.setFloat("objectMaterial.shininess", this->shininess);
+    shader.setBool("objectMaterial.useTextureData",   this->meshUsesTextures);
+    shader.setVector3("objectMaterial.ambientColor",  this->material.ambientColor);
+    shader.setVector3("objectMaterial.diffuseColor",  this->material.diffuseColor);
+    shader.setVector3("objectMaterial.specularColor", this->material.specularColor);
+    shader.setFloat("objectMaterial.shininess",       this->shininess);
 
     // draw mesh
     glBindVertexArray(VAO);

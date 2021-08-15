@@ -106,6 +106,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
     /* FILL MATERIAL DATA */
     float shininess;
+    Material mat;
+    bool meshUsesTextures = false;
     if(mesh->mMaterialIndex >= 0)
     {
         //Load Diffuse and Specular maps
@@ -118,14 +120,48 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
         // Get the shininess for this specific material
-        if(AI_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess))
+        if(aiReturn_SUCCESS != aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess))
         {
             // if unsuccessful set a default
             shininess = 32.0f;
-        }        
+        }
+        
+        // Material color
+        aiColor3D color;
+        if(aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_AMBIENT, color))
+        {
+            mat.ambientColor = glm::vec3(color.r, color.g, color.b);
+        }
+        else
+        {
+            mat.ambientColor = glm::vec3(0.5f, 0.5f, 0.5f);
+        }
+
+        if(aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+        {
+            mat.diffuseColor = glm::vec3(color.r, color.g, color.b);
+        }
+        else
+        {
+            mat.diffuseColor = glm::vec3(0.5f, 0.5f, 0.5f);
+        }
+
+        if(aiReturn_SUCCESS == material->Get(AI_MATKEY_COLOR_SPECULAR, color))
+        {
+            mat.specularColor = glm::vec3(color.r, color.g, color.b);
+        }
+        else
+        {
+            mat.specularColor = glm::vec3(0.5f, 0.5f, 0.5f);
+        }
+
+        if(material->GetTextureCount(aiTextureType_DIFFUSE) + material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+        {   
+            meshUsesTextures = true;
+        }
     }
 
-    return Mesh(vertices, indices, textures, shininess);
+    return Mesh(vertices, indices, textures, mat, shininess, meshUsesTextures);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
@@ -153,7 +189,6 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
 {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
-
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
