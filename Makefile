@@ -4,8 +4,8 @@ SRC_DIR = .
 GLFW_LINKER_FLAGS = $(shell pkg-config --static --libs glfw3)
 ASSIMP_LINKER_FLAGS = -Lshared -lassimp
 
-main: main.o shader.o glad.o stb_image.o camera.o mesh.o model.o
-	$(CXX) -o $(BIN_DIR)/main $(OBJ_DIR)/glad.o $(OBJ_DIR)/shader.o $(OBJ_DIR)/mesh.o $(OBJ_DIR)/model.o $(OBJ_DIR)/camera.o $(OBJ_DIR)/stb_image.o $(OBJ_DIR)/main.o $(GLFW_LINKER_FLAGS) $(ASSIMP_LINKER_FLAGS)
+main: main.o shader.o glad.o stb_image.o camera.o mesh.o model.o loadingbar.o subject.o
+	$(CXX) -o $(BIN_DIR)/main $(OBJ_DIR)/glad.o $(OBJ_DIR)/shader.o $(OBJ_DIR)/mesh.o $(OBJ_DIR)/model.o $(OBJ_DIR)/camera.o $(OBJ_DIR)/loadingbar.o $(OBJ_DIR)/subject.o $(OBJ_DIR)/stb_image.o $(OBJ_DIR)/main.o $(GLFW_LINKER_FLAGS) $(ASSIMP_LINKER_FLAGS)
 
 glad.o: glad.c includes/glad.h
 	$(CXX) -o $(OBJ_DIR)/glad.o $(SRC_DIR)/glad.c -c
@@ -27,6 +27,12 @@ mesh.o : Mesh.cpp includes/Mesh.h
 
 model.o : Model.cpp includes/Model.h
 	$(CXX) -o $(OBJ_DIR)/model.o $(SRC_DIR)/Model.cpp -c
+
+loadingbar.o : LoadingBar.cpp includes/LoadingBar.h
+	$(CXX) -o $(OBJ_DIR)/loadingbar.o $(SRC_DIR)/LoadingBar.cpp -c
+
+subject.o : Subject.cpp includes/Subject.h
+	$(CXX) -o $(OBJ_DIR)/subject.o $(SRC_DIR)/Subject.cpp -c
 
 clean:
 	rm $(BIN_DIR)/* -rf

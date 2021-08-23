@@ -9,7 +9,6 @@
 //OpenGL function loader
 #include "includes/glad.h"
 //Custom Classes
-//#include "includes/Shader.h"
 #include "includes/Camera.h"
 #include "includes/Model.h"
 //GLFW

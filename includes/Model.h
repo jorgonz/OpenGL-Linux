@@ -7,12 +7,14 @@
 #include "assimp/postprocess.h"
 
 #include "Mesh.h"
+#include "Subject.h"
 
 class Model 
 {
     public:
         Model(const std::string& path);
-        void Draw(Shader &shader);	
+        void Draw(Shader &shader);
+        
     private:
         // model data
         std::vector<Mesh> meshes;
@@ -26,4 +28,6 @@ class Model
                                              std::string typeName);
         unsigned int TextureFromFile(const char *path, const std::string &directory);
         bool isTextureCached(aiString texture);
+
+        Subject subject;
 };

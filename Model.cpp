@@ -1,5 +1,6 @@
 #include "includes/Model.h"
 #include "includes/stb_image.h"
+#include "includes/LoadingBar.h"
 
 Model::Model(const std::string& path)
 {
@@ -16,7 +17,6 @@ void Model::Draw(Shader &shader)
 
 void Model::loadModel(const std::string& path)
 {
-    std::cout << "Loading Model: " << path << std::endl;
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate /*| aiProcess_FlipUVs*/);
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
@@ -26,8 +26,10 @@ void Model::loadModel(const std::string& path)
     }
     this->directory = path.substr(0, path.find_last_of('/'));
 
+    LoadingBar bar(path, scene->mNumMeshes);
+    this->subject.AddObserver(&bar);
+    
     processNode(scene->mRootNode, scene);
-    std::cout << "Successfully Loaded Model: " << path << std::endl;
 }
 
 void Model::processNode(aiNode *node, const aiScene* scene)
@@ -160,6 +162,9 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             meshUsesTextures = true;
         }
     }
+
+    //Notify observers, in this case the loading bar
+    this->subject.Notify();
 
     return Mesh(vertices, indices, textures, mat, shininess, meshUsesTextures);
 }
